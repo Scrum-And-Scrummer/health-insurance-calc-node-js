@@ -17,6 +17,15 @@ app.use(cors({
 
 // Any other calculations also need an app.get function.
 
+/*
+Example function from Savannah's dice roller:
+app.get('/roll', (request, response) => {
+    console.log('Calling "/roll" on the Node.js server.');
+    response.json({ roll: Math.floor(Math.random() * 6) + 1 });
+});
+*/
+
+
 app.use((request, response) => {
     response.status(404);
     response.sendFile(path.join(__dirname, 'static', '404.html'));

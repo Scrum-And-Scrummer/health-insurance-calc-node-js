@@ -1,14 +1,14 @@
 {
-  "name": "health-insurance-calculator-test",
+  "name": "health-insurance-calc-node-js",
   "version": "1.0.0",
-  "description": "Test for health insurance calculator",
-  "homepage": "https://github.com/savannah7704/health-insurance-calc-test#readme",
+  "description": "Node.js server web app for health insurance calculator",
+  "homepage": "https://github.com/Scrum-And-Scrummer/health-insurance-calc-node-js#readme",
   "bugs": {
-    "url": "https://github.com/savannah7704/dice-roller-azure/issues"
+    "url": "https://github.com/Scrum-And-Scrummer/health-insurance-calc-node-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/savannah7704/health-insurance-calc-test.git"
+    "url": "git+https://github.com/Scrum-And-Scrummer/health-insurance-calc-node-js.git"
   },
   "license": "MIT",
   "author": "Savannah Stumpf",

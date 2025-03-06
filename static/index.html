@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health insurance test</title>
+    <script>
+        const API_URL = "https://health-insurance-test-ss-dre3b3h3fueefbau.centralus-01.azurewebsites.net/";
+
+        async function wakeServer() {
+            try {
+                await fetch(`${API_URL}/wake`);
+                console.log("Server wake-up request sent.");
+            } catch (error) {
+                console.error("Wake-up failed:", error);
+            }
+        }
+
+    </script>
+</head>
+<body onload="wakeServer()">
+    <h1>Health insurance calculator test</h1>>
+</body>
+</html>

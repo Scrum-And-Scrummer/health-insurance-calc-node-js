@@ -1,0 +1,24 @@
+{
+  "name": "health-insurance-calculator-test",
+  "version": "1.0.0",
+  "description": "Test for health insurance calculator",
+  "homepage": "https://github.com/savannah7704/health-insurance-calc-test#readme",
+  "bugs": {
+    "url": "https://github.com/savannah7704/dice-roller-azure/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/savannah7704/health-insurance-calc-test.git"
+  },
+  "license": "MIT",
+  "author": "Savannah Stumpf",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

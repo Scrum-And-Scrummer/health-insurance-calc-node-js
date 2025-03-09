@@ -60,7 +60,7 @@ const calculatePoints = (age, bmi, bloodPressure, familyDisease) => { // Written
 
 }
 
-app.get('/calculatePoints', (request, response) => { // Written by Savannah Stumpf
+app.get('/totalPoints', (request, response) => { // Written by Savannah Stumpf
   console.log('Calling "/totalPoints" on the Node.js server.')
   const pointTotal = calculatePoints(age, bmi, bloodPressure, familyDisease)
   response.json({ pointTotal })

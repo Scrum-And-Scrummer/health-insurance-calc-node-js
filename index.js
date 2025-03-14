@@ -10,9 +10,14 @@ app.use(cors({
   origin: allowedOrigin
 }));
 
+// function for converting US units to metric units
+const convertToMetric = (weight, height) => { // Written by Hana Hasan
+  const weightInKg = weight * 0.453592;
+  const heightInCm = height * 2.54;
+  return { weightInKg, heightInCm };
+}
 
 // We need an app.get function for adding up the points.
-
 const calculatePoints = (age, bmi, bloodPressure, familyDisease) => { // Written by Savannah Stumpf
   let totalPoints = 0
 

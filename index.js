@@ -17,6 +17,21 @@ const convertToMetric = (weight, height) => { // Written by Hana Hasan
   return { weightInKg, heightInCm };
 }
 
+
+// The website will send weight and height as query parameters, 
+// and this endpoint will return the converted metric values as JSON.
+app.get('/convert', (request, response) => {
+  console.log('Calling "/convert" on the Node.js server.')
+  //get the weight and height from the query parameters
+  const weight = parseFloat(request.query.weight);
+  const height = parseFloat(request.query.height);
+  //convert the weight and height to metric units
+  const metricValues = convertToMetric(weight, height);
+  response.json(metricValues);
+});
+
+
+
 // We need an app.get function for adding up the points.
 const calculatePoints = (age, bmi, bloodPressure, familyDisease) => { // Written by Savannah Stumpf
   let totalPoints = 0

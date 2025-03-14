@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'static')));
-const allowedOrigin = '*'; // Right now, the server allows requests from any source. We will need to replace the asterisk with URL to the static website
+const allowedOrigin = 'https://proud-rock-062952f10.6.azurestaticapps.net/'; // Right now, the server allows requests from any source. We will need to replace the asterisk with URL to the static website
 app.use(cors({
   origin: allowedOrigin
 }));

@@ -5,14 +5,34 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'static')));
-const allowedOrigin = '*'; // Right now, the server allows requests from any source. We will need to replace the asterisk with URL to the static website
+const allowedOrigin = 'https://proud-rock-062952f10.6.azurestaticapps.net/'; // Right now, the server allows requests from any source. We will need to replace the asterisk with URL to the static website
 app.use(cors({
   origin: allowedOrigin
 }));
 
+// function for converting US units to metric units
+const convertToMetric = (weight, height) => { // Written by Hana Hasan
+  const weightInKg = weight * 0.453592;
+  const heightInCm = height * 2.54;
+  return { weightInKg, heightInCm };
+}
+
+
+// The website will send weight and height as query parameters, 
+// and this endpoint will return the converted metric values as JSON.
+app.get('/convert', (request, response) => {
+  console.log('Calling "/convert" on the Node.js server.')
+  //get the weight and height from the query parameters
+  const weight = parseFloat(request.query.weight);
+  const height = parseFloat(request.query.height);
+  //convert the weight and height to metric units
+  const metricValues = convertToMetric(weight, height);
+  response.json(metricValues);
+});
+
+
 
 // We need an app.get function for adding up the points.
-
 const calculatePoints = (age, bmi, bloodPressure, familyDisease) => { // Written by Savannah Stumpf
   let totalPoints = 0
 

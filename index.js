@@ -4,107 +4,109 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Serve static files
 app.use(express.static(path.join(__dirname, 'static')));
-const allowedOrigin = 'https://proud-rock-062952f10.6.azurestaticapps.net/'; // Right now, the server allows requests from any source. We will need to replace the asterisk with URL to the static website
+
+// CORS config for static site
+const allowedOrigin = 'https://proud-rock-062952f10.6.azurestaticapps.net/';
 app.use(cors({
   origin: allowedOrigin
 }));
 
-// function for converting US units to metric units
-const convertToMetric = (weight, height) => { // Written by Hana Hasan
+// Convert to metric units (used elsewhere)
+const convertToMetric = (weight, height) => {
   const weightInKg = weight * 0.453592;
   const heightInCm = height * 2.54;
   return { weightInKg, heightInCm };
-}
+};
 
-
-// The website will send weight and height as query parameters, 
-// and this endpoint will return the converted metric values as JSON.
-app.get('/convert', (request, response) => {
-  console.log('Calling "/convert" on the Node.js server.')
-  //get the weight and height from the query parameters
-  const weight = parseFloat(request.query.weight);
-  const height = parseFloat(request.query.height);
-  //convert the weight and height to metric units
+// /convert route (optional)
+app.get('/convert', (req, res) => {
+  console.log('Calling "/convert" on the Node.js server.');
+  const weight = parseFloat(req.query.weight);
+  const height = parseFloat(req.query.height);
   const metricValues = convertToMetric(weight, height);
-  response.json(metricValues);
+  res.json(metricValues);
 });
 
+// ✅ /calcBMI route
+app.get('/calcBMI', (req, res) => {
+  const weight = parseFloat(req.query.weight); // in lbs
+  const height = parseFloat(req.query.height); // in inches
 
+  const weightInKg = weight * 0.453592;
+  const heightInMeters = height * 0.0254;
+  const bmi = weightInKg / (heightInMeters * heightInMeters);
+  let category = "";
 
-// We need an app.get function for adding up the points.
-const calculatePoints = (age, bmi, bloodPressure, familyDisease) => { // Written by Savannah Stumpf
-  let totalPoints = 0
+  if (bmi >= 18.5 && bmi <= 24.9) category = "normal";
+  else if (bmi >= 25.0 && bmi <= 29.9) category = "overweight";
+  else category = "obese";
 
-  if (age < 30) {
-    totalPoints += 0
-  } else if (age < 45) {
-    totalPoints += 10
-  } else if (age < 60) {
-    totalPoints += 20
-  } else {
-    totalPoints += 30
-  }
-
-  if (bmi >= 18.5 && bmi <= 24.9) { // normal
-    totalPoints += 0
-  } else if (bmi >= 25.0 && bmi <= 29.9) { // overweight
-    totalPoints += 30
-  } else { // obesity
-    totalPoints += 75
-  }
-
-  if (bloodPressure == 'normal') {
-    totalPoints += 0
-  } else if (bloodPressure == 'elevated') {
-    totalPoints += 15
-  } else if (bloodPressure == 'stage 1') {
-    totalPoints += 30
-  } else if (bloodPressure == 'stage 2') {
-    totalPoints += 75
-  } else if (bloodPressure == 'crisis') {
-    totalPoints += 100
-  }
-
-  // for family disease, maybe it can be an array? 
-  // Each disease can be searched for in the array
-  if (familyDisease.includes('diabetes')) {
-    totalPoints += 10
-  }
-  if (familyDisease.includes('cancer')) {
-    totalPoints += 10
-  }
-  if (familyDisease.includes('Alzheimer\'s')) {
-    totalPoints += 10
-  }
-
-}
-
-app.get('/totalPoints', (request, response) => { // Written by Savannah Stumpf
-  console.log('Calling "/totalPoints" on the Node.js server.')
-  const pointTotal = calculatePoints(age, bmi, bloodPressure, familyDisease)
-  response.json({ pointTotal })
-})
-
-// We need an app.get function for calculating BMI.
-
-// Any other calculations also need an app.get function.
-
-/*
-Example function from Savannah's dice roller:
-app.get('/roll', (request, response) => {
-    console.log('Calling "/roll" on the Node.js server.');
-    response.json({ roll: Math.floor(Math.random() * 6) + 1 });
-});
-*/
-
-
-app.use((request, response) => {
-    response.status(404);
-    response.sendFile(path.join(__dirname, 'static', '404.html'));
+  res.json({ bmi: bmi.toFixed(1), category });
 });
 
+// ✅ Risk calculation logic
+const calculatePoints = (age, bmi, bloodPressure, familyDisease) => {
+  let totalPoints = 0;
+  let bmiCategory = "";
+
+  // Age
+  if (age < 30) totalPoints += 0;
+  else if (age < 45) totalPoints += 10;
+  else if (age < 60) totalPoints += 20;
+  else totalPoints += 30;
+
+  // BMI
+  if (bmi >= 18.5 && bmi <= 24.9) { bmiCategory = "normal"; totalPoints += 0; }
+  else if (bmi >= 25.0 && bmi <= 29.9) { bmiCategory = "overweight"; totalPoints += 30; }
+  else { bmiCategory = "obese"; totalPoints += 75; }
+
+  // Blood Pressure
+  const bpPoints = {
+    "normal": 0,
+    "elevated": 15,
+    "stage 1": 30,
+    "stage 2": 75,
+    "crisis": 100
+  };
+  totalPoints += bpPoints[bloodPressure] || 0;
+
+  // Family History
+  if (familyDisease.includes("diabetes")) totalPoints += 10;
+  if (familyDisease.includes("cancer")) totalPoints += 10;
+  if (familyDisease.includes("Alzheimer's")) totalPoints += 10;
+
+  // Risk Category
+  let riskCategory = "";
+  if (totalPoints <= 20) riskCategory = "Low Risk";
+  else if (totalPoints <= 50) riskCategory = "Moderate Risk";
+  else if (totalPoints <= 75) riskCategory = "High Risk";
+  else riskCategory = "Uninsurable";
+
+  return { totalPoints, riskCategory, bmiCategory };
+};
+
+// ✅ /totalPoints route
+app.get('/totalPoints', (req, res) => {
+  console.log('Calling "/totalPoints" on the Node.js server.');
+  const age = parseInt(req.query.age);
+  const bmi = parseFloat(req.query.bmi);
+  const bloodPressure = req.query.bloodPressure;
+  const familyDisease = req.query.familyDisease ? req.query.familyDisease.split(',') : [];
+
+  const result = calculatePoints(age, bmi, bloodPressure, familyDisease);
+  res.json(result);
+});
+
+// 404 fallback
+app.use((req, res) => {
+  res.status(404);
+  res.sendFile(path.join(__dirname, 'static', '404.html'));
+});
+
+// Start server
 app.listen(port, () => console.log(
-    `Express started at "http://localhost:${port}"\n` +
-    `press Ctrl-C to terminate.`
+  `Express started at http://localhost:${port}\n` +
+  `Press Ctrl+C to stop.`
 ));

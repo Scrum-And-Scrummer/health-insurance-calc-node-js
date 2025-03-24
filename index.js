@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'static')));
 
 // CORS config for static site
-const allowedOrigin = 'https://proud-rock-062952f10.6.azurestaticapps.net/';
+const allowedOrigin = 'https://proud-rock-062952f10.6.azurestaticapps.net';
 app.use(cors({
   origin: allowedOrigin
 }));
